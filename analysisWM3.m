@@ -24,5 +24,3 @@ stats = [NTrial, NResp, NInclude, hitRate, FARate, dprime, c];
 labels = {'NTrial', 'NResp', 'NInclude', 'hitRate', 'FARate', 'dprime', 'c'};
 
 end
-
-
