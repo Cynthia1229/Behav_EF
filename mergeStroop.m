@@ -31,7 +31,7 @@ for ifile = 1:length(stroopfiles)
     resultTrans = table;
     resultTrans.id = repmat(sid, ntrial, 1);
     resultTrans.time = repmat(sdate, ntrial, 1);
-    varnames = {'iBlock', 'iTrial', 'Material', 'Unknown', 'RT', 'Key', 'KeyResponse'};
+    varnames = {'iBlock', 'iTrial', 'Material', 'Color', 'RT', 'Key', 'KeyResponse'};
     resultTrans = [resultTrans, cell2table(result, 'VariableNames', varnames)]; %#ok<AGROW>
     % merge current subject data to the total data set
     mrgdata = [mrgdata; resultTrans]; %#ok<AGROW>
