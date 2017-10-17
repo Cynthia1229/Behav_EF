@@ -31,7 +31,7 @@ for ifile = 1:length(stopsignalfiles)
     SeekerTrans = table;
     SeekerTrans.id = repmat(sid, ntrial, 1);
     SeekerTrans.time = repmat(sdate, ntrial, 1);
-    varnames = {'iTrial', 'iBlock', 'OptStop', 'Arrow', 'LadNum', 'CladX', 'SubResp', 'RT', 'OnsetTime', 'LadMov'};
+    varnames = {'iTrial', 'iBlock', 'IsStop', 'STIM', 'SSDCat', 'SSD', 'Resp', 'RT', 'OnsetTime', 'SSDNext'};
     SeekerTrans = [SeekerTrans, array2table(Seeker, 'VariableNames', varnames)]; %#ok<AGROW>
     % merge current subject data to the total data set
     mrgdata = [mrgdata; SeekerTrans]; %#ok<AGROW>
