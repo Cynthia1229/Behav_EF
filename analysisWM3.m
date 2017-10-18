@@ -8,7 +8,7 @@ data = readtable(fullfile(DATAFOLDER, 'WM3.csv'));
 [grps, gid] = findgroups(data(:, KEYMETAVAR));
 [stats, labels] = splitapply(@wm, data(:, ANADATAVAR), grps);
 results = [gid, array2table(stats, 'VariableNames', labels(1, :))];
-writetable(results, fullfile(DATAFOLDER, 'analysisWM3.csv'))
+writetable(results, fullfile(DATAFOLDER, 'WM3Result.csv'))
 
 function [stats, labels] = wm(ismatch, acc, rt)
 
