@@ -8,6 +8,7 @@ data = readtable(fullfile(DATAFOLDER, 'spatial_2back.csv'));
 [grps, gid] = findgroups(data(:, KEYMETAVAR));
 [stats, labels] = splitapply(@spatial, data(:, ANADATAVAR), grps);
 results = [gid, array2table(stats, 'VariableNames', labels(1, :))];
+writetable(results, fullfile(DATAFOLDER, 'SpatialWMResult.csv'))
 
 function [stats, labels] = spatial(loc, acc, rt)
 
