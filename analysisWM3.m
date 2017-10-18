@@ -13,7 +13,9 @@ writetable(results, fullfile(DATAFOLDER, 'WM3Result.csv'))
 function [stats, labels] = wm(ismatch, acc, rt)
 
 NTrial = length(ismatch);
-NResp = sum(~isnan(acc));
+NResp = sum(acc ~= -1);
+% set rt of no response trials as NaN
+rt(acc == -1) = nan;
 rt = rmoutlier(rt * 1000);
 acc(isnan(rt)) = nan;
 NInclude = sum(~isnan(acc));

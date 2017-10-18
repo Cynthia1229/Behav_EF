@@ -21,17 +21,25 @@ for ifile = 1:length(WMfiles)
     % load data
     load(fullfile(WM_DIR, filename))
     % get number the trials and recorded variables
-    [ntrial, nvar] = size(rec);
+    [~, nvar] = size(rec);
+    varnames = {'iTrial', 'stim', 'ismatch', 'type', 'ACC', 'RT', 'Resp'};
     % check whether the data is correctly recorded
     if nvar ~= 7
         warning('SCRIPT:DATAINVALID', 'Invalid data for subject: %d.', sid)
         continue
     end
+    % remove trials of no response required
+    rec(ismissing(rec(:, 4)), :) = []; %#ok<*SAGROW>
+    % transform multiple response trials
+    invalidRows = cellfun(@length, rec(:, 7)) ~= 1;
+    rec(invalidRows, 5) = {-1};
+    rec(invalidRows, 6) = {0};
+    rec(invalidRows, 7) = {''};
     % form a table to store the subject info and experiment data
     recTrans = table;
-    recTrans.id = repmat(sid, ntrial, 1);
-    recTrans.time = repmat(sdate, ntrial, 1);
-    varnames = {'iTrial', 'stim', 'ismatch', 'type', 'ACC', 'RT', 'Resp'};
+    recTrans.id = repmat(sid, size(rec, 1), 1);
+    recTrans.time = repmat(sdate, size(rec, 1), 1);
+    % transform to table for better readability
     recTrans = [recTrans, cell2table(rec, 'VariableNames', varnames)]; %#ok<AGROW>
     % merge current subject data to the total data set
     mrgdata = [mrgdata; recTrans]; %#ok<AGROW>
