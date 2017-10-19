@@ -15,10 +15,12 @@ function [stats, labels] = antisac(rt, acc)
 NTrial = length(acc);
 NResp = sum(rt ~= 0);
 % set rt of no response trials as NaN
-acc(outlier(rt, 'Method', 'cutoff', 'Boundary', [100, inf])) = -1;
-NInclude = sum(acc ~= -1);
+rt(rt == 0) = nan;
+% remove too-quick trials
+acc(outlier(rt, 'Method', 'cutoff', 'Boundary', [0.1, inf])) = nan;
+NInclude = sum(~isnan(acc));
 MRT = mean(rt(acc == 1));
-PE = 1 - sum(acc == 1) / NInclude;
+PE = 1 - nanmean(acc);
 stats = [NTrial, NResp, NInclude, MRT, PE];
 labels = {'NTrial', 'NResp', 'NInclude', 'MRT', 'PE'};
 
