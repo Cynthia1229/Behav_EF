@@ -22,7 +22,8 @@ NInclude = sum(~isnan(acc));
 hitRate = nanmean(acc(ismatch == 1));
 FARate = 1 - nanmean(acc(ismatch == 0));
 [dprime, c] = sdt(hitRate, FARate);
-stats = [NTrial, NResp, NInclude, hitRate, FARate, dprime, c];
-labels = {'NTrial', 'NResp', 'NInclude', 'hitRate', 'FARate', 'dprime', 'c'};
+IES = (sum(acc == 1)/NInclude)/nanmean(rt(acc == 1));
+stats = [NTrial, NResp, NInclude, hitRate, FARate, dprime, c, IES];
+labels = {'NTrial', 'NResp', 'NInclude', 'hitRate', 'FARate', 'dprime', 'c', 'IES'};
 
 end

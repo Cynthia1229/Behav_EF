@@ -21,7 +21,8 @@ NInclude = sum(~isnan(acc));
 hitRate = nanmean(acc(cond == 'Stay'));
 FARate = 1 - nanmean(acc(cond == 'Change'));
 [dprime, c] = sdt(hitRate, FARate);
-stats = [NTrial, NResp, NInclude, hitRate, FARate, dprime, c];
-labels = {'NTrial', 'NResp', 'NInclude', 'hitRate', 'FARate', 'dprime', 'c'};
+IES = (sum(acc == 1)/NInclude)/nanmean(rt(acc == 1));
+stats = [NTrial, NResp, NInclude, hitRate, FARate, dprime, c, IES];
+labels = {'NTrial', 'NResp', 'NInclude', 'hitRate', 'FARate', 'dprime', 'c', 'IES'};
 
 end
