@@ -14,10 +14,11 @@ function [stats, labels] = spatial(loc, acc, rt)
 
 NTrial = length(loc);
 NResp = sum(~isnan(acc));
-cond = categorical((loc - circshift(loc, 2)) == 0, [false, true], {'Change', 'Stay'});
-rt = rmoutlier(rt * 1000);
-acc(isnan(rt)) = nan;
+acc(isnan(acc)) = 0;
+% remove too-quick trials
+acc(outlier(rt, 'Method', 'cutoff', 'Boundary', [0.1, inf])) = nan;
 NInclude = sum(~isnan(acc));
+cond = categorical((loc - circshift(loc, 2)) == 0, [false, true], {'Change', 'Stay'});
 hitRate = nanmean(acc(cond == 'Stay'));
 FARate = 1 - nanmean(acc(cond == 'Change'));
 [dprime, c] = sdt(hitRate, FARate);

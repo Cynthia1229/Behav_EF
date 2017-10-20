@@ -15,10 +15,11 @@ function [stats, labels] = wm(ismatch, acc, rt)
 NTrial = length(ismatch);
 NResp = sum(acc ~= -1);
 % set rt of no response trials as NaN
-rt(acc == -1) = nan;
-rt = rmoutlier(rt * 1000);
-acc(isnan(rt)) = nan;
+rt(rt == 0) = nan;
+% remove too-quick trials
+acc(outlier(rt, 'Method', 'cutoff', 'Boundary', [0.1, inf])) = nan;
 NInclude = sum(~isnan(acc));
+acc(acc == -1) = 0;
 hitRate = nanmean(acc(ismatch == 1));
 FARate = 1 - nanmean(acc(ismatch == 0));
 [dprime, c] = sdt(hitRate, FARate);
