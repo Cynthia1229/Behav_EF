@@ -30,3 +30,15 @@ antisac_filtered <- antisac %>%
 write_csv(antisac_filtered, file.path(data_dir, "AntiSacFiltered.csv"))
 
 # CateSwitch ----
+
+# ShiftColor ----
+
+# ShiftNumber ----
+
+# spatialWM ---- 
+
+# StopSignal ----
+
+# Stroop ----
+
+# WM3 ----
