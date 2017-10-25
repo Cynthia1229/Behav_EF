@@ -20,6 +20,13 @@ for ifile = 1:length(spatialfiles)
         'InputFormat', 'dd-MMM-yyyy_HH-mm', 'Locale', 'en_US');
     % load data
     load(fullfile(SPATIAL_DIR, filename))
+    % remove the first two trials of each block
+    blocks = unique(rec(:, 2));
+    subcfg.type = '()';
+    subcfg.subs = {[1, 2]};
+    rmRows = arrayfun(@(block) subsref(find(rec(:, 2) == block), subcfg), blocks, 'UniformOutput', false);
+    rmRows = cat(1, rmRows{:});
+    rec(rmRows, :) = []; %#ok<SAGROW>
     % get number the trials and recorded variables
     [ntrial, nvar] = size(rec);
     % check whether the data is correctly recorded
@@ -39,4 +46,4 @@ end
 
 % write out data.
 if ~exist(MRGDAT_DIR, 'dir'), mkdir(MRGDAT_DIR); end
-writetable(mrgdata, fullfile(MRGDAT_DIR, 'spatial_2back.csv'))
+writetable(mrgdata, fullfile(MRGDAT_DIR, 'spatialWM.csv'))
