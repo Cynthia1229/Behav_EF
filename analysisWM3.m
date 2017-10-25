@@ -20,10 +20,13 @@ rt(rt == 0) = nan;
 acc(outlier(rt, 'Method', 'cutoff', 'Boundary', [0.1, inf])) = nan;
 NInclude = sum(~isnan(acc));
 acc(acc == -1) = 0;
+PE = 1 - nanmean(acc);
+MRT = mean(rt(acc == 1));
+IES = MRT / (1 - PE);
 hitRate = nanmean(acc(ismatch == 1));
 FARate = 1 - nanmean(acc(ismatch == 0));
 [dprime, c] = sdt(hitRate, FARate);
-stats = [NTrial, NResp, NInclude, hitRate, FARate, dprime, c];
-labels = {'NTrial', 'NResp', 'NInclude', 'hitRate', 'FARate', 'dprime', 'c'};
+stats = [NTrial, NResp, NInclude, PE, MRT, IES, hitRate, FARate, dprime, c];
+labels = {'NTrial', 'NResp', 'NInclude', 'PE', 'MRT', 'IES', 'hitRate', 'FARate', 'dprime', 'c'};
 
 end
