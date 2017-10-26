@@ -1,6 +1,7 @@
 
 clear
 DATAFOLDER = 'EFMerge';
+RESFOLDER = 'EFRes';
 KEYMETAVAR = {'id', 'time'};
 ANADATAVAR = {'condition', 'RT', 'KeyResponse'};
 
@@ -15,4 +16,4 @@ data.RT = data.RT * 1000;
 [grps, gid] = findgroups(data(:, KEYMETAVAR));
 [stats, labels] = splitapply(@sngprocControl, data(:, ANADATAVAR), grps);
 results = [gid, array2table(stats, 'VariableNames', labels(1, :))];
-writetable(results, fullfile(DATAFOLDER, 'StroopResult.csv'))
+writetable(results, fullfile(RESFOLDER, 'StroopResult.csv'))
