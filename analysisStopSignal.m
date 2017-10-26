@@ -1,6 +1,7 @@
 
 clear
 DATAFOLDER = 'EFMerge';
+RESFOLDER = 'EFRes';
 KEYMETAVAR = {'id', 'time'};
 ANADATAVAR = {'RT', 'ACC', 'IsStop', 'SSD', 'SSDCat'};
 
@@ -16,7 +17,7 @@ data.RT = data.RT * 1000;
 [grps, gid] = findgroups(data(:, KEYMETAVAR));
 [stats, labels] = splitapply(@stopSignal, data(:, ANADATAVAR), grps);
 results = [gid, array2table(stats, 'VariableNames', labels(1, :))];
-writetable(results, fullfile(DATAFOLDER, 'StopSignalResult.csv'))
+writetable(results, fullfile(RESFOLDER, 'StopSignalResult.csv'))
 
 function [stats, labels] = stopSignal(RT, ACC, IsStop, SSD, SSDCat)
 %SNGPROCBART Does some basic data transformation to BART task.
@@ -37,8 +38,11 @@ MRT_Go = mean(RT(ACC == 1 & IsStop == 0));
 MRT_Stop = mean(RT(ACC == 0 & IsStop == 1));
 PE_Go = 1 - nanmean(ACC(IsStop == 0));
 PE_Stop = 1 - mean(ACC(IsStop == 1));
+% if negative SSD occurs, treat all SSD as NaN
+if any(SSD <= 0 & IsStop == 1)
+    SSD(:) = nan;
+end
 % mean SSD
-% note: findpeaks are from signal processing toolbox
 MSSDMat = arrayfun(@(ssdcat) mean( ...
     [findpeaks(SSD(IsStop == 1 & SSDCat == ssdcat)); ...
     -findpeaks(-SSD(IsStop == 1 & SSDCat == ssdcat))]), 1:4);

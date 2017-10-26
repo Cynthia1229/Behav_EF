@@ -1,6 +1,7 @@
 
 clear
 DATAFOLDER = 'EFMerge';
+RESFOLDER = 'EFRes';
 KEYMETAVAR = {'id', 'time'};
 ANADATAVAR = {'RT', 'Score'};
 
@@ -8,7 +9,7 @@ data = readtable(fullfile(DATAFOLDER, 'AntiSac.csv'));
 [grps, gid] = findgroups(data(:, KEYMETAVAR));
 [stats, labels] = splitapply(@antisac, data(:, ANADATAVAR), grps);
 results = [gid, array2table(stats, 'VariableNames', labels(1, :))];
-writetable(results, fullfile(DATAFOLDER, 'AntiSacResult.csv'))
+writetable(results, fullfile(RESFOLDER, 'AntiSacResult.csv'))
 
 function [stats, labels] = antisac(rt, acc)
 
