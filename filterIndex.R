@@ -21,7 +21,8 @@ rm_dup_id <- function(tbl, var_crit, fun = min){
 }
 
 # set some configurations ----
-data_dir <- "EFMerge"
+data_dir <- "EFRes"
+filt_dir <- "EFFiltered"
 rate <- 0.8
 
 # AntiSac ----
@@ -33,7 +34,7 @@ antisac_filtered <- antisac %>%
   filter(PE_keep_idx(PE, NInclude, 1 / 3)) %>%
   # remove duplicate id"s
   rm_dup_id(PE)
-write_csv(antisac_filtered, file.path(data_dir, "AntiSacFiltered.csv"))
+write_csv(antisac_filtered, file.path(filt_dir, "AntiSacFiltered.csv"))
 
 # CateSwitch ----
 cateSwitch <- read_csv(file.path(data_dir, "CateSwitchResult.csv"))
@@ -44,7 +45,7 @@ cateSwitch_filtered <- cateSwitch %>%
   filter(PE_keep_idx(PE, NInclude)) %>%
   # remove duplicate id"s
   rm_dup_id(PE)
-write_csv(cateSwitch_filtered, file.path(data_dir, "CateSwitchFiltered.csv"))
+write_csv(cateSwitch_filtered, file.path(filt_dir, "CateSwitchFiltered.csv"))
 
 # ShiftColor ----
 shiftColor <- read_csv(file.path(data_dir, "ShiftColorResult.csv"))
@@ -55,7 +56,7 @@ shiftColor_filtered <- shiftColor %>%
   filter(PE_keep_idx(PE, NInclude)) %>%
   # remove duplicate id"s
   rm_dup_id(PE)
-write_csv(shiftColor_filtered, file.path(data_dir, "ShiftColorFiltered.csv"))
+write_csv(shiftColor_filtered, file.path(filt_dir, "ShiftColorFiltered.csv"))
 
 # ShiftNumber ----
 shiftNumber <- read_csv(file.path(data_dir, "ShiftNumberResult.csv"))
@@ -66,7 +67,7 @@ shiftNumber_filtered <- shiftNumber %>%
   filter(PE_keep_idx(PE, NInclude)) %>%
   # remove duplicate id"s
   rm_dup_id(PE)
-write_csv(shiftNumber_filtered, file.path(data_dir, "ShiftNumberFiltered.csv"))
+write_csv(shiftNumber_filtered, file.path(filt_dir, "ShiftNumberFiltered.csv"))
 
 # spatialWM ----
 spatialWM <- read_csv(file.path(data_dir, "SpatialWMResult.csv"))
@@ -82,7 +83,7 @@ spatialWM_filtered <- spatialWM %>%
     ) %>%
   # remove duplicate id"s
   rm_dup_id(PE)
-write_csv(spatialWM_filtered, file.path(data_dir, "spatialWMFiltered.csv"))
+write_csv(spatialWM_filtered, file.path(filt_dir, "spatialWMFiltered.csv"))
 
 # StopSignal ----
 stopSignal <- read_csv(file.path(data_dir, "StopSignalResult.csv"))
@@ -100,7 +101,7 @@ stopSignal_filtered <- stopSignal %>%
   ) %>%
   # remove duplicate id"s
   rm_dup_id(PE_Go)
-write_csv(stopSignal_filtered, file.path(data_dir, "StopSignalFiltered.csv"))
+write_csv(stopSignal_filtered, file.path(filt_dir, "StopSignalFiltered.csv"))
 
 # Stroop ----
 stroop <- read_csv(file.path(data_dir, "StroopResult.csv"))
@@ -111,7 +112,7 @@ stroop_filtered <- stroop %>%
   filter(PE_keep_idx(PE, NInclude, 1 / 4)) %>%
   # remove duplicate id"s
   rm_dup_id(PE)
-write_csv(stroop_filtered, file.path(data_dir, "StroopFiltered.csv"))
+write_csv(stroop_filtered, file.path(filt_dir, "StroopFiltered.csv"))
 
 # WM3 ----
 WM3 <- read_csv(file.path(data_dir, "WM3Result.csv"))
@@ -127,10 +128,10 @@ WM3_filtered <- WM3 %>%
   ) %>%
   # remove duplicate id"s
   rm_dup_id(PE)
-write_csv(WM3_filtered, file.path(data_dir, "WM3filtered.csv"))
+write_csv(WM3_filtered, file.path(filt_dir, "WM3filtered.csv"))
 
 # Keep track ----
 keepTrack <- read_excel(file.path(data_dir, "KeepTrack.xlsx"))
 keepTrack_filtered <- keepTrack %>%
   filter(! score %in% boxplot.stats(score)$out)
-write_csv(WM3_filtered, file.path(data_dir, "KeepTrackFiltered.csv"))
+write_csv(keepTrack_filtered, file.path(filt_dir, "KeepTrackFiltered.csv"))

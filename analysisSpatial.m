@@ -1,6 +1,7 @@
 
 clear
 DATAFOLDER = 'EFMerge';
+RESFOLDER = 'EFRes';
 KEYMETAVAR = {'id', 'time'};
 ANADATAVAR = {'flashLoc', 'respCorrect', 'RT'};
 
@@ -8,7 +9,7 @@ data = readtable(fullfile(DATAFOLDER, 'spatialWM.csv'));
 [grps, gid] = findgroups(data(:, KEYMETAVAR));
 [stats, labels] = splitapply(@spatial, data(:, ANADATAVAR), grps);
 results = [gid, array2table(stats, 'VariableNames', labels(1, :))];
-writetable(results, fullfile(DATAFOLDER, 'SpatialWMResult.csv'))
+writetable(results, fullfile(RESFOLDER, 'SpatialWMResult.csv'))
 
 function [stats, labels] = spatial(loc, acc, rt)
 
