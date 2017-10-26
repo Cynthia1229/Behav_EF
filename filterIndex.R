@@ -133,5 +133,10 @@ write_csv(WM3_filtered, file.path(filt_dir, "WM3filtered.csv"))
 # Keep track ----
 keepTrack <- read_excel(file.path(data_dir, "KeepTrack.xlsx"))
 keepTrack_filtered <- keepTrack %>%
-  filter(! score %in% boxplot.stats(score)$out)
+  filter(
+    # remove subjects with NA results
+    ! is.na(score),
+    # remove subjects with abnormal score
+    ! score %in% boxplot.stats(score)$out
+    )
 write_csv(keepTrack_filtered, file.path(filt_dir, "KeepTrackFiltered.csv"))
