@@ -37,8 +37,11 @@ MRT_Go = mean(RT(ACC == 1 & IsStop == 0));
 MRT_Stop = mean(RT(ACC == 0 & IsStop == 1));
 PE_Go = 1 - nanmean(ACC(IsStop == 0));
 PE_Stop = 1 - mean(ACC(IsStop == 1));
+% if negative SSD occurs, treat all SSD as NaN
+if any(SSD <= 0 & IsStop == 1)
+    SSD(:) = nan;
+end
 % mean SSD
-% note: findpeaks are from signal processing toolbox
 MSSDMat = arrayfun(@(ssdcat) mean( ...
     [findpeaks(SSD(IsStop == 1 & SSDCat == ssdcat)); ...
     -findpeaks(-SSD(IsStop == 1 & SSDCat == ssdcat))]), 1:4);
