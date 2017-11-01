@@ -4,6 +4,9 @@
 library(tidyverse)
 library(readxl)
 
+# clear jobs ----
+rm(list = ls())
+
 # user defined functions ----
 PE_keep_idx <- function(PE, N, p = 0.5){
   mu <- p
@@ -150,5 +153,6 @@ keepTrack_filtered <- keepTrack %>%
     ! is.na(score),
     # remove subjects with abnormal score
     ! score %in% boxplot.stats(score)$out
-    )
+    ) %>%
+  rename(id = ID)
 write_csv(keepTrack_filtered, file.path(filt_dir, paste0(taskname, filt_suffix, file_ext)))
