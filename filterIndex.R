@@ -24,9 +24,13 @@ rm_dup_id <- function(tbl, var_crit, fun = min){
 data_dir <- "EFRes"
 filt_dir <- "EFFiltered"
 rate <- 0.8
+data_suffix <- "Result"
+filt_suffix <- "Filtered"
+file_ext <- ".csv"
 
 # AntiSac ----
-antisac <- read_csv(file.path(data_dir, "AntiSacResult.csv"))
+taskname <- "AntiSac"
+antisac <- read_csv(file.path(data_dir, paste0(taskname, data_suffix, file_ext)))
 antisac_filtered <- antisac %>%
   # remove subjects without enough responses
   filter(NResp > rate * NTrial) %>%
@@ -34,10 +38,11 @@ antisac_filtered <- antisac %>%
   filter(PE_keep_idx(PE, NInclude, 1 / 3)) %>%
   # remove duplicate id"s
   rm_dup_id(PE)
-write_csv(antisac_filtered, file.path(filt_dir, "AntiSacFiltered.csv"))
+write_csv(antisac_filtered, file.path(filt_dir, paste0(taskname, filt_suffix, file_ext)))
 
 # CateSwitch ----
-cateSwitch <- read_csv(file.path(data_dir, "CateSwitchResult.csv"))
+taskname <- "CateSwitch"
+cateSwitch <- read_csv(file.path(data_dir, paste0(taskname, data_suffix, file_ext)))
 cateSwitch_filtered <- cateSwitch %>%
   # remove subjects without enough responses
   filter(NInclude > rate * NTrial) %>%
@@ -45,10 +50,11 @@ cateSwitch_filtered <- cateSwitch %>%
   filter(PE_keep_idx(PE, NInclude)) %>%
   # remove duplicate id"s
   rm_dup_id(PE)
-write_csv(cateSwitch_filtered, file.path(filt_dir, "CateSwitchFiltered.csv"))
+write_csv(cateSwitch_filtered, file.path(filt_dir, paste0(taskname, filt_suffix, file_ext)))
 
 # ShiftColor ----
-shiftColor <- read_csv(file.path(data_dir, "ShiftColorResult.csv"))
+taskname <- "ShiftColor"
+shiftColor <- read_csv(file.path(data_dir, paste0(taskname, data_suffix, file_ext)))
 shiftColor_filtered <- shiftColor %>%
   # remove subjects without enough responses
   filter(NInclude > rate * NTrial) %>%
@@ -56,10 +62,11 @@ shiftColor_filtered <- shiftColor %>%
   filter(PE_keep_idx(PE, NInclude)) %>%
   # remove duplicate id"s
   rm_dup_id(PE)
-write_csv(shiftColor_filtered, file.path(filt_dir, "ShiftColorFiltered.csv"))
+write_csv(shiftColor_filtered, file.path(filt_dir, paste0(taskname, filt_suffix, file_ext)))
 
 # ShiftNumber ----
-shiftNumber <- read_csv(file.path(data_dir, "ShiftNumberResult.csv"))
+taskname <- "ShiftNumber"
+shiftNumber <- read_csv(file.path(data_dir, paste0(taskname, data_suffix, file_ext)))
 shiftNumber_filtered <- shiftNumber %>%
   # remove subjects without enough responses
   filter(NInclude > rate * NTrial) %>%
@@ -67,10 +74,11 @@ shiftNumber_filtered <- shiftNumber %>%
   filter(PE_keep_idx(PE, NInclude)) %>%
   # remove duplicate id"s
   rm_dup_id(PE)
-write_csv(shiftNumber_filtered, file.path(filt_dir, "ShiftNumberFiltered.csv"))
+write_csv(shiftNumber_filtered, file.path(filt_dir, paste0(taskname, filt_suffix, file_ext)))
 
 # spatialWM ----
-spatialWM <- read_csv(file.path(data_dir, "SpatialWMResult.csv"))
+taskname <- "spatialWM"
+spatialWM <- read_csv(file.path(data_dir, paste0(taskname, data_suffix, file_ext)))
 spatialWM_filtered <- spatialWM %>%
   filter(
     # remove subjects without enough responses
@@ -83,10 +91,11 @@ spatialWM_filtered <- spatialWM %>%
     ) %>%
   # remove duplicate id"s
   rm_dup_id(PE)
-write_csv(spatialWM_filtered, file.path(filt_dir, "spatialWMFiltered.csv"))
+write_csv(spatialWM_filtered, file.path(filt_dir, paste0(taskname, filt_suffix, file_ext)))
 
 # StopSignal ----
-stopSignal <- read_csv(file.path(data_dir, "StopSignalResult.csv"))
+taskname <- "StopSignal"
+stopSignal <- read_csv(file.path(data_dir, paste0(taskname, data_suffix, file_ext)))
 stopSignal_filtered <- stopSignal %>%
   filter(
     # remove subjects without enough responses
@@ -101,10 +110,11 @@ stopSignal_filtered <- stopSignal %>%
   ) %>%
   # remove duplicate id"s
   rm_dup_id(PE_Go)
-write_csv(stopSignal_filtered, file.path(filt_dir, "StopSignalFiltered.csv"))
+write_csv(stopSignal_filtered, file.path(filt_dir, paste0(taskname, filt_suffix, file_ext)))
 
 # Stroop ----
-stroop <- read_csv(file.path(data_dir, "StroopResult.csv"))
+taskname <- "Stroop"
+stroop <- read_csv(file.path(data_dir, paste0(taskname, data_suffix, file_ext)))
 stroop_filtered <- stroop %>%
   # remove subjects without enough responses
   filter(NInclude > rate * NTrial) %>%
@@ -112,10 +122,11 @@ stroop_filtered <- stroop %>%
   filter(PE_keep_idx(PE, NInclude, 1 / 4)) %>%
   # remove duplicate id"s
   rm_dup_id(PE)
-write_csv(stroop_filtered, file.path(filt_dir, "StroopFiltered.csv"))
+write_csv(stroop_filtered, file.path(filt_dir, paste0(taskname, filt_suffix, file_ext)))
 
 # WM3 ----
-WM3 <- read_csv(file.path(data_dir, "WM3Result.csv"))
+taskname <- "WM3"
+WM3 <- read_csv(file.path(data_dir, paste0(taskname, data_suffix, file_ext)))
 WM3_filtered <- WM3 %>%
   filter(
     # remove subjects without enough responses
@@ -128,9 +139,10 @@ WM3_filtered <- WM3 %>%
   ) %>%
   # remove duplicate id"s
   rm_dup_id(PE)
-write_csv(WM3_filtered, file.path(filt_dir, "WM3filtered.csv"))
+write_csv(WM3_filtered, file.path(filt_dir, paste0(taskname, filt_suffix, file_ext)))
 
 # Keep track ----
+taskname <- "KeepTrack"
 keepTrack <- read_excel(file.path(data_dir, "KeepTrack.xlsx"))
 keepTrack_filtered <- keepTrack %>%
   filter(
@@ -139,4 +151,4 @@ keepTrack_filtered <- keepTrack %>%
     # remove subjects with abnormal score
     ! score %in% boxplot.stats(score)$out
     )
-write_csv(keepTrack_filtered, file.path(filt_dir, "KeepTrackFiltered.csv"))
+write_csv(keepTrack_filtered, file.path(filt_dir, paste0(taskname, filt_suffix, file_ext)))
