@@ -1,4 +1,5 @@
-# please set working directory as the directory of this file.
+# set working directory as the directory of this file.
+setwd(getSrcDirectory(function(x) x))
 
 # load packages ----
 library(tidyverse)
@@ -33,7 +34,6 @@ filt_suffix <- "Filtered"
 file_ext <- ".csv"
 indices <- read_csv(file.path(filt_dir, "index_map.csv"))
 index_map <- setNames(indices$index, indices$Taskname)
-data_files <- list.files(filt_dir, "*Filtered*")
 
 # AntiSac ----
 taskname <- "AntiSac"
@@ -162,6 +162,7 @@ keepTrack_filtered <- keepTrack %>%
 write_csv(keepTrack_filtered, file.path(filt_dir, paste0(taskname, filt_suffix, file_ext)))
 
 # merge datasets ----
+data_files <- list.files(filt_dir, "*Filtered*")
 data_merged <- data_files %>%
   map(
     function (x){
