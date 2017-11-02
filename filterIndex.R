@@ -55,6 +55,8 @@ cateSwitch_filtered <- cateSwitch %>%
   filter(NInclude > rate * NTrial) %>%
   # remove subjects with too many errors
   filter(PE_keep_idx(PE, NInclude)) %>%
+  # remove subjects with abnormal switch costs
+  filter(! MRT_diff %in% boxplot.stats(MRT_diff)$out) %>% 
   # remove duplicate id"s
   rm_dup_id(PE)
 write_csv(cateSwitch_filtered, file.path(filt_dir, paste0(taskname, filt_suffix, file_ext)))
@@ -67,6 +69,8 @@ shiftColor_filtered <- shiftColor %>%
   filter(NInclude > rate * NTrial) %>%
   # remove subjects with too many errors
   filter(PE_keep_idx(PE, NInclude)) %>%
+  # remove subjects with abnormal switch costs
+  filter(! MRT_diff %in% boxplot.stats(MRT_diff)$out) %>% 
   # remove duplicate id"s
   rm_dup_id(PE)
 write_csv(shiftColor_filtered, file.path(filt_dir, paste0(taskname, filt_suffix, file_ext)))
@@ -79,6 +83,8 @@ shiftNumber_filtered <- shiftNumber %>%
   filter(NInclude > rate * NTrial) %>%
   # remove subjects with too many errors
   filter(PE_keep_idx(PE, NInclude)) %>%
+  # remove subjects with abnormal switch costs
+  filter(! MRT_diff %in% boxplot.stats(MRT_diff)$out) %>% 
   # remove duplicate id"s
   rm_dup_id(PE)
 write_csv(shiftNumber_filtered, file.path(filt_dir, paste0(taskname, filt_suffix, file_ext)))
@@ -95,7 +101,7 @@ spatialWM_filtered <- spatialWM %>%
     PE_keep_idx(PE, NInclude),
     # remove subjects with abnormal dprime
     ! dprime %in% boxplot.stats(dprime)$out
-    ) %>%
+  ) %>%
   # remove duplicate id"s
   rm_dup_id(PE)
 write_csv(spatialWM_filtered, file.path(filt_dir, paste0(taskname, filt_suffix, file_ext)))
@@ -113,7 +119,9 @@ stopSignal_filtered <- stopSignal %>%
     # remove subjects with NaN results
     ! is.nan(SSRT),
     # remove subjects with too spread SSDs
-    ! SSSD %in% boxplot.stats(SSSD)$out
+    ! SSSD %in% boxplot.stats(SSSD)$out,
+    # remove subjects with abnormal stop signal RT
+    ! SSRT %in% boxplot.stats(SSRT)$out
   ) %>%
   # remove duplicate id"s
   rm_dup_id(PE_Go)
@@ -127,6 +135,8 @@ stroop_filtered <- stroop %>%
   filter(NInclude > rate * NTrial) %>%
   # remove subjects with too many errors
   filter(PE_keep_idx(PE, NInclude, 1 / 4)) %>%
+  # remove subjects with abnormal Incongruent-Congruent RT
+  filter(! MRT_diff %in% boxplot.stats(MRT_diff)$out) %>% 
   # remove duplicate id"s
   rm_dup_id(PE)
 write_csv(stroop_filtered, file.path(filt_dir, paste0(taskname, filt_suffix, file_ext)))
@@ -157,7 +167,7 @@ keepTrack_filtered <- keepTrack %>%
     ! is.na(score),
     # remove subjects with abnormal score
     ! score %in% boxplot.stats(score)$out
-    ) %>%
+  ) %>%
   rename(id = ID)
 write_csv(keepTrack_filtered, file.path(filt_dir, paste0(taskname, filt_suffix, file_ext)))
 
