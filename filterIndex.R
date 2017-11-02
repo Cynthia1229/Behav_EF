@@ -3,6 +3,7 @@
 # load packages ----
 library(tidyverse)
 library(readxl)
+library(stringr)
 
 # clear jobs ----
 rm(list = ls())
@@ -30,6 +31,9 @@ rate <- 0.8
 data_suffix <- "Result"
 filt_suffix <- "Filtered"
 file_ext <- ".csv"
+indices <- read_csv(file.path(filt_dir, "index_map.csv"))
+index_map <- setNames(indices$index, indices$Taskname)
+data_files <- list.files(filt_dir, "*Filtered*")
 
 # AntiSac ----
 taskname <- "AntiSac"
@@ -156,3 +160,23 @@ keepTrack_filtered <- keepTrack %>%
     ) %>%
   rename(id = ID)
 write_csv(keepTrack_filtered, file.path(filt_dir, paste0(taskname, filt_suffix, file_ext)))
+
+# merge datasets ----
+data_merged <- data_files %>%
+  map(
+    function (x){
+      taskname <- str_match(x, ".+(?=Filtered)")
+      index <- index_map[taskname]
+      read_csv(file.path(filt_dir, x)) %>%
+        select(one_of("id", index)) %>%
+        # filter(id %in% sublist) %>%
+        rename(!!taskname := !!index)
+    }
+  ) %>%
+  reduce(
+    function(x, y){
+      full_join(x, y, by = "id")
+    }
+  ) %>%
+  filter_all(all_vars(!is.na(.)))
+write_csv(data_merged, file.path(filt_dir, "ef_behav_all.csv"))
