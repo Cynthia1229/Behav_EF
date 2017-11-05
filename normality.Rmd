@@ -1,23 +1,35 @@
-# load packages ----
+---
+title: "Model fitting"
+author: Zhang and Sheng
+date: "Updated at `r lubridate::now()`"
+output:
+  html_notebook:
+    theme: readable
+    toc: true
+    number_section: true
+---
+
+```{r load packages and configurations, message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
+# load packages
 library(tidyverse)
 library(stringr)
 library(psych)
 library(extrafont)
-
-# clear jobs ----
-rm(list = ls())
-
 # configurations ----
-setwd(getSrcDirectory(function(x) x))
 filt_dir <- "EFFiltered"
 sublist <- parse_integer(read_lines(file.path(filt_dir, "sublist.txt")))
+cfa_dir <- "cfa"
+data_dir <- file.path(cfa_dir, "data")
+img_dir <- file.path(cfa_dir, "image")
+```
 
-# read and filter data ----
+```{r load data and filter out not used subjects, message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
 ef_data_raw <- read_csv(file.path(filt_dir, "ef_behav_all.csv")) %>%
   filter(id %in% sublist) %>%
   select(-id)
+```
 
-# data transformation in order that high score -> high ability
+```{r data transformation in order that high score -> high ability, message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
 ef_data_tran <- ef_data_raw %>%
   mutate(
     # logit transformation to stabilize
@@ -31,16 +43,22 @@ ef_data_tran <- ef_data_raw %>%
     StopSignal = - StopSignal,
     Stroop = - Stroop
   )
+```
 
-# standardisation ----
+```{r indices standardisation and store standardized data, message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
 ef_data_tran_scale <- ef_data_tran %>%
-  mutate_all(scale)
+  mutate_all(scale) %>%
+  select(AntiSac, StopSignal, Stroop,
+         CateSwitch, ShiftColor, ShiftNumber,
+         KeepTrack, spatialWM, WM3)
+write_csv(ef_data_tran_scale, file.path(data_dir, "EF.csv"))
+```
 
-# descriptive statistics ----
-ef_data_tran_scale %>%
-  do(describe(.))
+```{r descriptive statistics, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+describe(ef_data_tran_scale)
+```
 
-# visualisation raw data ----
+```{r visualisation of raw data, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 ef_data_raw_stack <- gather(ef_data_raw, task, score) %>%
   mutate(
     task = factor(
@@ -65,9 +83,10 @@ ggplot(ef_data_raw_stack, aes(score, fill = task)) +
     legend.title = element_text(family = "Gill Sans MT", size = 16),
     plot.margin = margin(20, 20, 20, 20)
   )
-ggsave("Distribution Raw Data.jpg")
+ggsave(file.path(img_dir, "Distribution Raw Data.jpg"))
+```
 
-# visualisation transformed data ----
+```{r visualisation transformed data, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 ef_data_tran_stack <- gather(ef_data_tran, task, score) %>%
   mutate(
     task = factor(
@@ -92,9 +111,10 @@ ggplot(ef_data_tran_stack, aes(score, fill = task)) +
     legend.title = element_text(family = "Gill Sans MT", size = 16),
     plot.margin = margin(20, 20, 20, 20)
   )
-ggsave("Distribution Transformed Data.jpg")
+ggsave(file.path(img_dir, "Distribution Transformed Data.jpg"))
+```
 
-# visualisation scaled data in Q-Q plot ----
+```{r visualisation scaled data in Q-Q plot, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 ef_data_scale_stack <- gather(ef_data_tran_scale, task, score) %>%
   mutate(
     task = factor(
@@ -120,6 +140,9 @@ ggplot(ef_data_scale_stack, aes(sample = score, color = task)) +
     legend.title = element_text(family = "Gill Sans MT", size = 16),
     plot.margin = margin(20, 20, 20, 20)
     )
-ggsave("QQ-plot.jpg")
+ggsave(file.path(img_dir, "Q-Q plot.jpg"))
+```
 
+```{r multinormal test, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 mardia(ef_data_tran_scale)
+```

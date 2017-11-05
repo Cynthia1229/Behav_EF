@@ -1,0 +1,127 @@
+---
+title: "Model fitting"
+author: Zhang and Sheng
+date: "Updated at `r lubridate::now()`"
+output:
+  html_notebook:
+    theme: readable
+    toc: true
+    number_section: true
+---
+
+```{r load packages and data and basic configurations, message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
+# laod packages
+library(tidyverse)
+library(lavaan)
+library(semPlot)
+# configurations
+cfa_base <- "cfa"
+data_dir <- file.path(cfa_base, "data")
+mdl_spec_dir <- file.path(cfa_base, "modelspec")
+# load data
+ef_data <- read_csv(file.path(data_dir, "EF.csv"))
+# load model specifications
+mdl_three <- read_lines(file.path(mdl_spec_dir, "full_three_factor.lav"))
+# mdl_three_alt <- read_lines(file.path(mdl_spec_dir, "full_three_factor_alt.lav"))
+mdl_one <- read_lines(file.path(mdl_spec_dir, "one_factor.lav"))
+mdl_shft_inhb <- read_lines(file.path(mdl_spec_dir, "ShftInhb.lav"))
+mdl_shft_updt <- read_lines(file.path(mdl_spec_dir, "ShftUpdt.lav"))
+mdl_updt_inhb <- read_lines(file.path(mdl_spec_dir, "UpdtInhb.lav"))
+```
+
+# Introduction
+
+Here we try to replicate the empirical result of Miyake (2000). The data are from a project in Beijing Normal University. The following gives a first glimpse of the basic descriptive statistics.
+
+```{r descriptive, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+psych::describe(ef_data) %>% 
+  select(vars, n, min, max, skew, kurtosis)
+
+```
+
+# Model fitting checking
+
+## Three factor model
+
+### Full three factor model
+
+This model assumes that there exist three correlated latent variables. More specifically, the model is:
+
+$$Inhibition =~ AntiSac + StopSignal + Stroop$$
+$$Shifting =~ CateSwitch + ShiftColor + ShiftNumber$$
+$$Updating =~ KeepTrack + spatialWM + WM3 $$
+
+The following lines are used to fit the model.
+
+```{r full three factor}
+fit.three.full <- cfa(mdl_three, ef_data, std.lv = TRUE)
+summary(fit.three.full)
+fitMeasures(fit.three.full)
+semPaths(fit.three.full, what = "par")
+```
+
+### Independent three factor model
+
+This model assumes that there exist three independent latent variables.
+
+```{r independent three factor}
+fit.three.indep <- cfa(mdl_three, ef_data, std.lv = TRUE, orthogonal = TRUE)
+summary(fit.three.indep)
+fitMeasures(fit.three.indep)
+semPaths(fit.three.indep, what = "par")
+```
+
+## One factor model
+
+This model assumes that there exists only one latent ability.
+
+```{r one factor}
+fit.one <- cfa(mdl_one, ef_data, std.lv = TRUE)
+summary(fit.one)
+fitMeasures(fit.one)
+semPaths(fit.one, what = "par")
+```
+
+## Two factor model
+
+### Shifting = Inhibition
+
+This model assumes that there exists two latent abilities. In other words, only `Updating` is the differentiated ability.
+
+```{r two-factor shft.inhb}
+fit.shft.inhb <- cfa(mdl_shft_inhb, ef_data, std.lv = TRUE)
+summary(fit.shft.inhb)
+fitMeasures(fit.shft.inhb)
+semPaths(fit.shft.inhb, what = "par")
+```
+
+### Shifting = Updating
+
+This model assumes that there exists two latent abilities. In other words, only `Inhibition` is the differentiated ability.
+
+```{r two-factor shft.updt}
+fit.shft.updt <- cfa(mdl_shft_updt, ef_data, std.lv = TRUE)
+summary(fit.shft.updt)
+fitMeasures(fit.shft.updt)
+semPaths(fit.shft.updt, what = "par")
+```
+
+### Updating = Inhibition
+
+This model assumes that there exists two latent abilities. In other words, only `Shifting` is the differentiated ability.
+
+```{r two-factor updt.inhb}
+fit.updt.inhb <- cfa(mdl_updt_inhb, ef_data, std.lv = TRUE)
+summary(fit.updt.inhb)
+fitMeasures(fit.updt.inhb)
+semPaths(fit.updt.inhb, what = "par")
+```
+
+## Model comparison
+
+From the above fitting results, we know that there are only two models reaching the acceptable fitting criterion. We will using **likelihood ratio test** to check which is the better model.
+
+```{r mdoel checking}
+anova(fit.three.full, fit.updt.inhb)
+```
+
