@@ -41,7 +41,6 @@ Here we try to replicate the empirical result of Miyake (2000). The data are fro
 ```{r descriptive, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 psych::describe(ef_data) %>% 
   select(vars, n, min, max, skew, kurtosis)
-
 ```
 
 # Model fitting checking
