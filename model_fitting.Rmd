@@ -6,6 +6,7 @@ output:
   html_notebook:
     theme: readable
     toc: true
+    toc_float: true
     number_section: true
 ---
 
@@ -39,11 +40,11 @@ cfa_plot <- function(mdl){
 Here we try to replicate the empirical result of Miyake (2000). The data are from a project in Beijing Normal University. The following gives a first glimpse of the basic descriptive statistics.
 
 ```{r descriptive, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
-psych::describe(ef_data) %>% 
+psych::describe(ef_data) %>%
   select(vars, n, min, max, skew, kurtosis)
 ```
 
-# Model fitting checking
+# Confirmatory Factor Analysis
 
 ## Three factor model
 
@@ -199,7 +200,7 @@ From the comparisons above, we concluded that:
 1. The estimation method to use is "**diagonally weighted least squares**".
 1. The optimal model is **full three factor** model.
 
-# Extract scores
+## Extract scores
 
 We extract the scores of each subject on each ability to correlate to brain data.
 
