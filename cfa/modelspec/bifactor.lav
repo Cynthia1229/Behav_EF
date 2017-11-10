@@ -1,0 +1,5 @@
+# bifactor model
+# latent variable definitions
+Shifting =~ CateSwitch + ShiftColor + ShiftNumber
+Updating =~ KeepTrack + spatialWM + WM3
+Common =~ AntiSac + StopSignal + Stroop + CateSwitch + ShiftColor + ShiftNumber + KeepTrack + spatialWM + WM3

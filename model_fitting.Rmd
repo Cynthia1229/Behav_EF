@@ -24,11 +24,11 @@ res_dir <- file.path(cfa_base, "result")
 ef_data <- read_csv(file.path(data_dir, "EF.csv"))
 # load model specifications
 mdl_three <- read_lines(file.path(mdl_spec_dir, "full_three_factor.lav"))
-# mdl_three_alt <- read_lines(file.path(mdl_spec_dir, "full_three_factor_alt.lav"))
 mdl_one <- read_lines(file.path(mdl_spec_dir, "one_factor.lav"))
 mdl_shft_inhb <- read_lines(file.path(mdl_spec_dir, "ShftInhb.lav"))
 mdl_shft_updt <- read_lines(file.path(mdl_spec_dir, "ShftUpdt.lav"))
 mdl_updt_inhb <- read_lines(file.path(mdl_spec_dir, "UpdtInhb.lav"))
+mdl_bifactor <- read_lines(file.path(mdl_spec_dir, "bifactor.lav"))
 # path graph plot
 cfa_plot <- function(mdl){
   semPaths(mdl, whatLabels = "par", rotation = 4, sizeMan = 10, sizeMan2 = 6.18, sizeLat = 10, mar = c(3, 20, 3, 20), nCharNodes = 0)
@@ -60,8 +60,7 @@ $$Updating =~ KeepTrack + spatialWM + WM3 $$
 
 ```{r full three factor}
 fit.three.full.ml <- cfa(mdl_three, ef_data, std.lv = TRUE)
-summary(fit.three.full.ml)
-fitMeasures(fit.three.full.ml)
+summary(fit.three.full.ml, fit.measures = TRUE, standardized = TRUE)
 cfa_plot(fit.three.full.ml)
 ```
 
@@ -69,8 +68,7 @@ cfa_plot(fit.three.full.ml)
 
 ```{r full three factor DWLS}
 fit.three.full.dwls <- cfa(mdl_three, ef_data, std.lv = TRUE, estimator = "DWLS")
-summary(fit.three.full.dwls)
-fitMeasures(fit.three.full.dwls)
+summary(fit.three.full.dwls, fit.measures = TRUE, standardized = TRUE)
 cfa_plot(fit.three.full.dwls)
 ```
 
@@ -82,8 +80,7 @@ This model assumes that there exist three independent latent variables.
 
 ```{r independent three factor}
 fit.three.indep.ml <- cfa(mdl_three, ef_data, std.lv = TRUE, orthogonal = TRUE)
-summary(fit.three.indep.ml)
-fitMeasures(fit.three.indep.ml)
+summary(fit.three.indep.ml, fit.measures = TRUE, standardized = TRUE)
 cfa_plot(fit.three.indep.ml)
 ```
 
@@ -91,8 +88,7 @@ cfa_plot(fit.three.indep.ml)
 
 ```{r independent three factor DWLS}
 fit.three.indep.dwls <- cfa(mdl_three, ef_data, std.lv = TRUE, orthogonal = TRUE, estimator = "DWLS")
-summary(fit.three.indep.dwls)
-fitMeasures(fit.three.indep.dwls)
+summary(fit.three.indep.dwls, fit.measures = TRUE, standardized = TRUE)
 cfa_plot(fit.three.indep.dwls)
 ```
 
@@ -104,8 +100,7 @@ This model assumes that there exists only one latent ability.
 
 ```{r one factor}
 fit.one.ml <- cfa(mdl_one, ef_data, std.lv = TRUE)
-summary(fit.one.ml)
-fitMeasures(fit.one.ml)
+summary(fit.one.ml, fit.measures = TRUE, standardized = TRUE)
 cfa_plot(fit.one.ml)
 ```
 
@@ -113,8 +108,7 @@ cfa_plot(fit.one.ml)
 
 ```{r one factor DWLS}
 fit.one.dwls <- cfa(mdl_one, ef_data, std.lv = TRUE, estimator = "DWLS")
-summary(fit.one.dwls)
-fitMeasures(fit.one.dwls)
+summary(fit.one.dwls, fit.measures = TRUE, standardized = TRUE)
 cfa_plot(fit.one.dwls)
 ```
 
@@ -128,8 +122,7 @@ This model assumes that there exists two latent abilities. In other words, only 
 
 ```{r two-factor shft.inhb}
 fit.shft.inhb.ml <- cfa(mdl_shft_inhb, ef_data, std.lv = TRUE)
-summary(fit.shft.inhb.ml)
-fitMeasures(fit.shft.inhb.ml)
+summary(fit.shft.inhb.ml, fit.measures = TRUE, standardized = TRUE)
 cfa_plot(fit.shft.inhb.ml)
 ```
 
@@ -137,8 +130,7 @@ cfa_plot(fit.shft.inhb.ml)
 
 ```{r two-factor shft.inhb DWLS}
 fit.shft.inhb.dwls <- cfa(mdl_shft_inhb, ef_data, std.lv = TRUE, estimator = "DWLS")
-summary(fit.shft.inhb.dwls)
-fitMeasures(fit.shft.inhb.dwls)
+summary(fit.shft.inhb.dwls, fit.measures = TRUE, standardized = TRUE)
 cfa_plot(fit.shft.inhb.dwls)
 ```
 
@@ -150,8 +142,7 @@ This model assumes that there exists two latent abilities. In other words, only 
 
 ```{r two-factor shft.updt}
 fit.shft.updt.ml <- cfa(mdl_shft_updt, ef_data, std.lv = TRUE)
-summary(fit.shft.updt.ml)
-fitMeasures(fit.shft.updt.ml)
+summary(fit.shft.updt.ml, fit.measures = TRUE, standardized = TRUE)
 cfa_plot(fit.shft.updt.ml)
 ```
 
@@ -159,8 +150,7 @@ cfa_plot(fit.shft.updt.ml)
 
 ```{r two-factor shft.updt DWLS}
 fit.shft.updt.dwls <- cfa(mdl_shft_updt, ef_data, std.lv = TRUE, estimator = "DWLS")
-summary(fit.shft.updt.dwls)
-fitMeasures(fit.shft.updt.dwls)
+summary(fit.shft.updt.dwls, fit.measures = TRUE, standardized = TRUE)
 cfa_plot(fit.shft.updt.dwls)
 ```
 
@@ -172,8 +162,7 @@ This model assumes that there exists two latent abilities. In other words, only 
 
 ```{r two-factor updt.inhb}
 fit.updt.inhb.ml <- cfa(mdl_updt_inhb, ef_data, std.lv = TRUE)
-summary(fit.updt.inhb.ml)
-fitMeasures(fit.updt.inhb.ml)
+summary(fit.updt.inhb.ml, fit.measures = TRUE, standardized = TRUE)
 cfa_plot(fit.updt.inhb.ml)
 ```
 
@@ -181,8 +170,7 @@ cfa_plot(fit.updt.inhb.ml)
 
 ```{r two-factor updt.inhb DWLS}
 fit.updt.inhb.dwls <- cfa(mdl_updt_inhb, ef_data, std.lv = TRUE, estimator = "DWLS")
-summary(fit.updt.inhb.dwls)
-fitMeasures(fit.updt.inhb.dwls)
+summary(fit.updt.inhb.dwls, fit.measures = TRUE, standardized = TRUE)
 cfa_plot(fit.updt.inhb.dwls)
 ```
 
@@ -209,4 +197,12 @@ scores.dwls <- predict(fit.three.full.dwls)
 write_csv(as.data.frame(scores.dwls), file.path(res_dir, "scores_dwls.csv"))
 scores.ml <- predict(fit.three.full.ml)
 write_csv(as.data.frame(scores.ml), file.path(res_dir, "scores_ml.csv"))
+```
+
+# Bifactor Model
+
+```{r bifactor model}
+fit.bifac.ml <- cfa(mdl_bifactor, ef_data, std.lv = TRUE, orthogonal = TRUE, estimator = "ML")
+summary(fit.bifac.ml, fit.measures = TRUE, standardized = TRUE)
+cfa_plot(fit.bifac.ml)
 ```
