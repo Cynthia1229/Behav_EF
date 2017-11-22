@@ -1,6 +1,3 @@
-# set working directory as the directory of this file.
-setwd(getSrcDirectory(function(x) x))
-
 # load packages ----
 library(tidyverse)
 library(readxl)
