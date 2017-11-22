@@ -26,8 +26,9 @@ rm_dup_id <- function(tbl, var_crit, fun = min){
 }
 
 # set some configurations ----
-data_dir <- "EFRes"
-filt_dir <- "EFFiltered"
+base_dir <- getSrcDirectory(function(x) x)
+data_dir <- file.path(base_dir, "EFRes")
+filt_dir <- file.path(base_dir, "EFFiltered")
 rate <- 0.8
 data_suffix <- "Result"
 filt_suffix <- "Filtered"
@@ -56,7 +57,7 @@ cateSwitch_filtered <- cateSwitch %>%
   # remove subjects with too many errors
   filter(PE_keep_idx(PE, NInclude)) %>%
   # remove subjects with abnormal switch costs
-  filter(! MRT_diff %in% boxplot.stats(MRT_diff)$out) %>% 
+  filter(! MRT_diff %in% boxplot.stats(MRT_diff)$out) %>%
   # remove duplicate id"s
   rm_dup_id(PE)
 write_csv(cateSwitch_filtered, file.path(filt_dir, paste0(taskname, filt_suffix, file_ext)))
@@ -70,7 +71,7 @@ shiftColor_filtered <- shiftColor %>%
   # remove subjects with too many errors
   filter(PE_keep_idx(PE, NInclude)) %>%
   # remove subjects with abnormal switch costs
-  filter(! MRT_diff %in% boxplot.stats(MRT_diff)$out) %>% 
+  filter(! MRT_diff %in% boxplot.stats(MRT_diff)$out) %>%
   # remove duplicate id"s
   rm_dup_id(PE)
 write_csv(shiftColor_filtered, file.path(filt_dir, paste0(taskname, filt_suffix, file_ext)))
@@ -84,7 +85,7 @@ shiftNumber_filtered <- shiftNumber %>%
   # remove subjects with too many errors
   filter(PE_keep_idx(PE, NInclude)) %>%
   # remove subjects with abnormal switch costs
-  filter(! MRT_diff %in% boxplot.stats(MRT_diff)$out) %>% 
+  filter(! MRT_diff %in% boxplot.stats(MRT_diff)$out) %>%
   # remove duplicate id"s
   rm_dup_id(PE)
 write_csv(shiftNumber_filtered, file.path(filt_dir, paste0(taskname, filt_suffix, file_ext)))
@@ -110,6 +111,21 @@ write_csv(spatialWM_filtered, file.path(filt_dir, paste0(taskname, filt_suffix, 
 taskname <- "StopSignal"
 stopSignal <- read_csv(file.path(data_dir, paste0(taskname, data_suffix, file_ext)))
 stopSignal_filtered <- stopSignal %>%
+  gather(type, value, MSSD1:SSSD4) %>%
+  separate(type, c("var", "ssd_cat"), -2) %>%
+  spread(var, value) %>%
+  # remove nonpositive MSSD
+  filter(SSSD != 0) %>%
+  group_by(ssd_cat) %>%
+  # remove MSSD outlier
+  mutate(MSSD = ifelse(MSSD %in% robustbase::adjboxStats(MSSD)$out, NA, MSSD)) %>%
+  group_by_at(vars(id:PE_Stop)) %>%
+  summarise(
+    SSSD = sd(MSSD, na.rm = TRUE),
+    MSSD = mean(MSSD, na.rm = TRUE)
+  ) %>%
+  ungroup() %>%
+  mutate(SSRT = MRT_Go - MSSD) %>%
   filter(
     # remove subjects without enough responses
     NResp > rate * NTrial,
@@ -136,7 +152,7 @@ stroop_filtered <- stroop %>%
   # remove subjects with too many errors
   filter(PE_keep_idx(PE, NInclude, 1 / 4)) %>%
   # remove subjects with abnormal Incongruent-Congruent RT
-  filter(! MRT_diff %in% boxplot.stats(MRT_diff)$out) %>% 
+  filter(! MRT_diff %in% boxplot.stats(MRT_diff)$out) %>%
   # remove duplicate id"s
   rm_dup_id(PE)
 write_csv(stroop_filtered, file.path(filt_dir, paste0(taskname, filt_suffix, file_ext)))

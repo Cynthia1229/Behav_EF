@@ -38,18 +38,17 @@ MRT_Go = mean(RT(ACC == 1 & IsStop == 0));
 MRT_Stop = mean(RT(ACC == 0 & IsStop == 1));
 PE_Go = 1 - nanmean(ACC(IsStop == 0));
 PE_Stop = 1 - mean(ACC(IsStop == 1));
-% if negative SSD occurs, treat all SSD as NaN
-if any(SSD <= 0 & IsStop == 1)
-    SSD(:) = nan;
-end
+% mark out those ssd categories with negative ssd
+ssdcats = 1:4;
+ssdnormal = arrayfun(@(ssdcat) ...
+    ~any(SSD(IsStop == 1 & SSDCat == ssdcat) <= 0), ...
+    ssdcats);
 % mean SSD
 MSSDMat = arrayfun(@(ssdcat) mean( ...
     [findpeaks(SSD(IsStop == 1 & SSDCat == ssdcat)); ...
-    -findpeaks(-SSD(IsStop == 1 & SSDCat == ssdcat))]), 1:4);
-MSSD = nanmean(MSSDMat);
-SSSD = nanstd(MSSDMat);
-SSRT = MRT_Go - MSSD;
+    -findpeaks(-SSD(IsStop == 1 & SSDCat == ssdcat))]), ...
+    ssdcats);
 
-stats = [NTrial, NResp, NInclude, MRT_Go, MRT_Stop, PE_Go, PE_Stop, MSSDMat, MSSD, SSSD, SSRT];
-labels = {'NTrial', 'NResp', 'NInclude', 'MRT_Go', 'MRT_Stop', 'PE_Go', 'PE_Stop', 'MSSD1', 'MSSD2', 'MSSD3', 'MSSD4', 'MSSD', 'SSSD', 'SSRT'};
+stats = [NTrial, NResp, NInclude, MRT_Go, MRT_Stop, PE_Go, PE_Stop, MSSDMat, ssdnormal];
+labels = {'NTrial', 'NResp', 'NInclude', 'MRT_Go', 'MRT_Stop', 'PE_Go', 'PE_Stop', 'MSSD1', 'MSSD2', 'MSSD3', 'MSSD4', 'SSSD1', 'SSSD2', 'SSSD3', 'SSSD4'};
 end
