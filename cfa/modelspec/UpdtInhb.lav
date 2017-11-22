@@ -1,0 +1,4 @@
+# two-factor model
+# latent variable definitions
+UpdtInhb =~ AntiSac + StopSignal + Stroop + KeepTrack + spatialWM + WM3
+Shifting =~ CateSwitch + ShiftColor + ShiftNumber

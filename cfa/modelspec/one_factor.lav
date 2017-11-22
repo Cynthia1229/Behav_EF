@@ -1,0 +1,3 @@
+# one-factor model
+# latent variable definitions
+General =~ AntiSac + StopSignal + Stroop + CateSwitch + ShiftColor + ShiftNumber + KeepTrack + spatialWM + WM3
