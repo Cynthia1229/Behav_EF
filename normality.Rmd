@@ -33,7 +33,7 @@ ef_data_raw <- read_csv(file.path(filt_dir, "ef_behav_all.csv")) %>%
 ef_data_tran <- ef_data_raw %>%
   mutate(
     # logit transformation to stabilize
-    AntiSac = logit(1 - AntiSac),
+    AntiSac = asin(sqrt(1 - AntiSac)),
     CateSwitch = - CateSwitch,
     # due to the small sample size, use Bayesian estimation
     # PC = (n + 1) / (N + 2)
