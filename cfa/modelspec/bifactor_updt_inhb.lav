@@ -2,5 +2,4 @@
 # latent variable definitions
 Common =~ AntiSac + StopSignal + Stroop + CateSwitch + ShiftColor + ShiftNumber + KeepTrack + spatialWM + WM3
 Inhibition =~ AntiSac + StopSignal + Stroop
-Shifting =~ CateSwitch + ShiftColor + ShiftNumber
 Updating =~ KeepTrack + spatialWM + WM3

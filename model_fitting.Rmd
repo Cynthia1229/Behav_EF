@@ -21,7 +21,7 @@ data_dir <- file.path(cfa_base, "data")
 mdl_spec_dir <- file.path(cfa_base, "modelspec")
 res_dir <- file.path(cfa_base, "result")
 # load data
-ef_data <- read_csv(file.path(data_dir, "EF.csv"))
+ef_data <- read_csv(file.path(data_dir, "EF_Behav_scaled.csv"))
 # load model specifications
 mdl_three <- read_lines(file.path(mdl_spec_dir, "full_three_factor.lav"))
 mdl_one <- read_lines(file.path(mdl_spec_dir, "one_factor.lav"))
@@ -29,6 +29,9 @@ mdl_shft_inhb <- read_lines(file.path(mdl_spec_dir, "ShftInhb.lav"))
 mdl_shft_updt <- read_lines(file.path(mdl_spec_dir, "ShftUpdt.lav"))
 mdl_updt_inhb <- read_lines(file.path(mdl_spec_dir, "UpdtInhb.lav"))
 mdl_bifactor <- read_lines(file.path(mdl_spec_dir, "bifactor.lav"))
+mdl_bifactor_updt_shft <- read_lines(file.path(mdl_spec_dir, "bifactor_updt_shft.lav"))
+mdl_bifactor_updt_inhb <- read_lines(file.path(mdl_spec_dir, "bifactor_updt_inhb.lav"))
+mdl_bifactor_inhb_shft <- read_lines(file.path(mdl_spec_dir, "bifactor_inhb_shft.lav"))
 # path graph plot
 cfa_plot <- function(mdl){
   semPaths(mdl, whatLabels = "par", rotation = 4, sizeMan = 10, sizeMan2 = 6.18, sizeLat = 10, mar = c(3, 20, 3, 20), nCharNodes = 0)
@@ -194,15 +197,104 @@ We extract the scores of each subject on each ability to correlate to brain data
 
 ```{r extract scores}
 scores.dwls <- predict(fit.three.full.dwls)
-write_csv(as.data.frame(scores.dwls), file.path(res_dir, "scores_dwls.csv"))
+write_csv(as.data.frame(scores.dwls), file.path(res_dir, "scores_dwls_bebav.csv"))
 scores.ml <- predict(fit.three.full.ml)
-write_csv(as.data.frame(scores.ml), file.path(res_dir, "scores_ml.csv"))
+write_csv(as.data.frame(scores.ml), file.path(res_dir, "scores_ml_behav.csv"))
 ```
 
 # Bifactor Model
 
-```{r bifactor model}
+## Three factors
+
+### Maximum Likelihood Estimation
+
+```{r bifactor model ML}
 fit.bifac.ml <- cfa(mdl_bifactor, ef_data, std.lv = TRUE, orthogonal = TRUE, estimator = "ML")
 summary(fit.bifac.ml, fit.measures = TRUE, standardized = TRUE)
 cfa_plot(fit.bifac.ml)
+```
+
+### Diagnol Weighted Least Square
+
+```{r bifactor model DWLS}
+fit.bifac.dwls <- cfa(mdl_bifactor, ef_data, std.lv = TRUE, orthogonal = TRUE, estimator = "DWLS")
+summary(fit.bifac.dwls, fit.measures = TRUE, standardized = TRUE)
+cfa_plot(fit.bifac.dwls)
+```
+
+## Two factors
+
+### Updating + Inhibition
+
+#### Maximum Likelihood Estimation
+
+```{r bifactor model UI ML}
+fit.bifac.ui.ml <- cfa(mdl_bifactor_updt_inhb, ef_data, std.lv = TRUE, orthogonal = TRUE, estimator = "ML")
+summary(fit.bifac.ui.ml, fit.measures = TRUE, standardized = TRUE)
+cfa_plot(fit.bifac.ui.ml)
+```
+
+#### Diagnol Weighted Least Square
+
+```{r bifactor model UI DWLS}
+fit.bifac.ui.dwls <- cfa(mdl_bifactor_updt_inhb, ef_data, std.lv = TRUE, orthogonal = TRUE, estimator = "DWLS")
+summary(fit.bifac.ui.dwls, fit.measures = TRUE, standardized = TRUE)
+cfa_plot(fit.bifac.ui.dwls)
+```
+
+### Updating + Shifting
+
+#### Maximum Likelihood Estimation
+
+```{r bifactor model US ML}
+fit.bifac.us.ml <- cfa(mdl_bifactor_updt_shft, ef_data, std.lv = TRUE, orthogonal = TRUE, estimator = "ML")
+summary(fit.bifac.us.ml, fit.measures = TRUE, standardized = TRUE)
+cfa_plot(fit.bifac.us.ml)
+```
+
+#### Diagnol Weighted Least Square
+
+```{r bifactor model US DWLS}
+fit.bifac.us.dwls <- cfa(mdl_bifactor_updt_shft, ef_data, std.lv = TRUE, orthogonal = TRUE, estimator = "DWLS")
+summary(fit.bifac.us.dwls, fit.measures = TRUE, standardized = TRUE)
+cfa_plot(fit.bifac.us.dwls)
+```
+
+### Shifting + Inhibition
+
+#### Maximum Likelihood Estimation
+
+```{r bifactor model IS ML}
+fit.bifac.is.ml <- cfa(mdl_bifactor_inhb_shft, ef_data, std.lv = TRUE, orthogonal = TRUE, estimator = "ML")
+summary(fit.bifac.is.ml, fit.measures = TRUE, standardized = TRUE)
+cfa_plot(fit.bifac.is.ml)
+```
+
+#### Diagnol Weighted Least Square
+
+```{r bifactor model IS DWLS}
+fit.bifac.is.dwls <- cfa(mdl_bifactor_inhb_shft, ef_data, std.lv = TRUE, orthogonal = TRUE, estimator = "DWLS")
+summary(fit.bifac.is.dwls, fit.measures = TRUE, standardized = TRUE)
+cfa_plot(fit.bifac.is.dwls)
+```
+
+### Model comparison
+
+From the above fitting results, we know that there are three models reaching the acceptable fitting criterion. We will using **likelihood ratio test** to check which is the better model.
+
+```{r mdoel checking bifactor}
+anova(fit.bifac.ml, fit.bifac.us.ml)
+anova(fit.bifac.us.ml, fit.bifac.is.ml)
+
+anova(fit.bifac.us.dwls, fit.bifac.is.dwls)
+```
+## Extract scores
+
+We extract the scores of each subject on each ability to correlate to brain data.
+
+```{r extract bifactor scores}
+scores.dwls <- predict(fit.bifac.dwls)
+write_csv(as.data.frame(scores.dwls), file.path(res_dir, "scores_dwls_bifactor_behav.csv"))
+scores.ml <- predict(fit.bifac.ml)
+write_csv(as.data.frame(scores.ml), file.path(res_dir, "scores_ml_bifactor_behav.csv"))
 ```
