@@ -1,5 +1,5 @@
 ---
-title: "Model fitting"
+title: "Normality Checking"
 author: Zhang and Sheng
 date: "Updated at `r lubridate::now()`"
 output:
@@ -20,20 +20,22 @@ filt_dir <- "EFFiltered"
 sublist <- parse_integer(read_lines(file.path(filt_dir, "sublist.txt")))
 cfa_dir <- "cfa"
 data_dir <- file.path(cfa_dir, "data")
-img_dir <- file.path(cfa_dir, "image")
 ```
 
 ```{r load data and filter out not used subjects, message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
 ef_data_raw <- read_csv(file.path(filt_dir, "ef_behav_all.csv")) %>%
   filter(id %in% sublist) %>%
-  select(-id)
+  select(-id) %>% 
+  select(AntiSac, StopSignal, Stroop,
+        CateSwitch, ShiftColor, ShiftNumber,
+        KeepTrack, spatialWM, WM3)
 ```
 
 ```{r data transformation in order that high score -> high ability, message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
 ef_data_tran <- ef_data_raw %>%
   mutate(
     # logit transformation to stabilize
-    AntiSac = logit(1 - AntiSac),
+    AntiSac = asin(sqrt(1 - AntiSac)),
     CateSwitch = - CateSwitch,
     # due to the small sample size, use Bayesian estimation
     # PC = (n + 1) / (N + 2)
@@ -43,20 +45,22 @@ ef_data_tran <- ef_data_raw %>%
     StopSignal = - StopSignal,
     Stroop = - Stroop
   )
+write_csv(ef_data_tran, file.path(data_dir, "EF_Behav_trans.csv"))
 ```
 
 ```{r indices standardisation and store standardized data, message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
 ef_data_tran_scale <- ef_data_tran %>%
-  mutate_all(scale) %>%
-  select(AntiSac, StopSignal, Stroop,
-         CateSwitch, ShiftColor, ShiftNumber,
-         KeepTrack, spatialWM, WM3)
-write_csv(ef_data_tran_scale, file.path(data_dir, "EF.csv"))
+  mutate_all(scale)
+write_csv(ef_data_tran_scale, file.path(data_dir, "EF_Behav_scaled.csv"))
 ```
+
+# Descriptive statistics for the transfromed dataset
 
 ```{r descriptive statistics, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 describe(ef_data_tran_scale)
 ```
+
+# Visualization of distribution of raw data
 
 ```{r visualisation of raw data, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 ef_data_raw_stack <- gather(ef_data_raw, task, score) %>%
@@ -83,8 +87,9 @@ ggplot(ef_data_raw_stack, aes(score, fill = task)) +
     legend.title = element_text(family = "Gill Sans MT", size = 16),
     plot.margin = margin(20, 20, 20, 20)
   )
-ggsave(file.path(img_dir, "Distribution Raw Data.jpg"))
 ```
+
+# Visualization of distribution of transformed data
 
 ```{r visualisation transformed data, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 ef_data_tran_stack <- gather(ef_data_tran, task, score) %>%
@@ -111,8 +116,9 @@ ggplot(ef_data_tran_stack, aes(score, fill = task)) +
     legend.title = element_text(family = "Gill Sans MT", size = 16),
     plot.margin = margin(20, 20, 20, 20)
   )
-ggsave(file.path(img_dir, "Distribution Transformed Data.jpg"))
 ```
+
+# Q-Q plot against normal distribution
 
 ```{r visualisation scaled data in Q-Q plot, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 ef_data_scale_stack <- gather(ef_data_tran_scale, task, score) %>%
@@ -140,9 +146,21 @@ ggplot(ef_data_scale_stack, aes(sample = score, color = task)) +
     legend.title = element_text(family = "Gill Sans MT", size = 16),
     plot.margin = margin(20, 20, 20, 20)
     )
-ggsave(file.path(img_dir, "Q-Q plot.jpg"))
 ```
+
+# Muiltinormal test
 
 ```{r multinormal test, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 mardia(ef_data_tran_scale)
+```
+
+# Correlation plot
+
+```{r correlation plot, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+corres <- corr.test(ef_data_tran_scale)
+cor.plot(r = corres$r, pval = corres$p, stars = TRUE,
+         numbers = TRUE, colors = TRUE, 
+         upper = FALSE, diag = FALSE,
+         xlas = 2,
+         zlim = c(-0.1, 0.4), asp = 1)
 ```
