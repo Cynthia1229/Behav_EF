@@ -6,3 +6,4 @@ cfa/image
 cfa/result
 # files
 *.html
+.Rproj.user
